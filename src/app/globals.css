@@ -1,26 +1,75 @@
 @import "tailwindcss";
 
+/*
+ * Paleta única (sem modo escuro): o público principal é idoso, e alternar o
+ * tema por preferência do sistema derrubaria o contraste em tablets antigos
+ * que ficam em modo escuro o tempo todo.
+ */
+@theme {
+  --color-fundo: #faf9f6;
+  --color-superficie: #ffffff;
+  --color-tinta: #17211f;
+  --color-tinta-suave: #4b5856;
+  --color-marca: #0f5b5a;
+  --color-marca-clara: #e3f0ef;
+  --color-marca-escura: #0a4241;
+  --color-destaque: #b4552b;
+  --color-alerta: #9b2c2c;
+  --color-borda: #dfdcd4;
+
+  --font-sans: var(--font-sans-app), system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  /* Base grande: todo o resto escala a partir daqui. */
+  font-size: 18px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-fundo);
+  color: var(--color-tinta);
+  font-family: var(--font-sans);
+}
+
+/* Foco sempre visível — navegação por teclado na área do curador. */
+:focus-visible {
+  outline: 3px solid var(--color-marca);
+  outline-offset: 2px;
+}
+
+/*
+ * Modo quiosque: trava o que faz o idoso "escapar" sem querer — seleção de
+ * texto, menu de long-press, zoom por duplo toque e arrasto elástico.
+ */
+body[data-kiosk="true"] {
+  overscroll-behavior: none;
+  touch-action: pan-y;
+}
+
+body[data-kiosk="true"] * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body[data-kiosk="true"] input,
+body[data-kiosk="true"] textarea {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

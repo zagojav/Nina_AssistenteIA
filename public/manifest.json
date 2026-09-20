@@ -1,0 +1,19 @@
+{
+  "name": "Nina — Assistente de Curadores",
+  "short_name": "Nina",
+  "description": "Conversas assistidas e relatórios de acompanhamento para casas de repouso.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#faf9f6",
+  "theme_color": "#0f5b5a",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "categories": ["health", "lifestyle"],
+  "icons": [
+    { "src": "/icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

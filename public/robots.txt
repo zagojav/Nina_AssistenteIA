@@ -1,0 +1,4 @@
+# Sistema privado com dado pessoal sensível de saúde (LGPD).
+# Nenhuma página deve ser indexada por buscador.
+User-agent: *
+Disallow: /

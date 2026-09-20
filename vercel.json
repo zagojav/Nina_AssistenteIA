@@ -1,0 +1,7 @@
+{
+  "crons": [
+    { "path": "/api/cron/consolidar?tipo=diario", "schedule": "0 23 * * *" },
+    { "path": "/api/cron/consolidar?tipo=semanal", "schedule": "0 23 * * 0" },
+    { "path": "/api/cron/retencao", "schedule": "30 4 * * *" }
+  ]
+}

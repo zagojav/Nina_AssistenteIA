@@ -1,0 +1,87 @@
+rules_version = '2';
+
+/*
+ * Dado de saúde é categoria sensível (LGPD, art. 11). A postura aqui é negar
+ * por padrão: o app nunca fala direto com o Firestore — toda leitura e escrita
+ * passa por rota de API que valida o ID token e grava log de acesso.
+ *
+ * Estas regras são a segunda camada: se alguém apontar o SDK client para o
+ * banco, só consegue ler dados da própria instituição, e nada que contenha
+ * credencial (o pinHash do idoso fica fora de qualquer leitura de client).
+ */
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // O doc do curador tem como id o uid do Firebase Auth.
+    function curadorDa(inst) {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/instituicoes/$(inst)/curadores/$(request.auth.uid));
+    }
+
+    // Catálogos globais: leitura para equipe autenticada, escrita só pelo servidor.
+    match /jogos/{jogoId} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    // A base científica é curada fora do app. Nem a IA nem o client escrevem aqui.
+    match /padroesReferencia/{padraoId} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    match /instituicoes/{inst} {
+      allow read: if curadorDa(inst);
+      allow write: if false;
+
+      match /curadores/{curadorId} {
+        allow read: if curadorDa(inst);
+        allow write: if false;
+      }
+
+      /*
+       * Idoso guarda pinHash e as regras não filtram campo: leitura direta
+       * fica bloqueada para qualquer client. Use /api/admin/idosos.
+       */
+      match /idosos/{idosoId} {
+        allow read, write: if false;
+
+        match /sessoesJogo/{sessaoId} {
+          allow read: if curadorDa(inst);
+          allow write: if false;
+        }
+      }
+
+      match /conversas/{conversaId} {
+        allow read: if curadorDa(inst);
+        allow write: if false;
+
+        match /mensagens/{mensagemId} {
+          allow read: if curadorDa(inst);
+          allow write: if false;
+        }
+      }
+
+      match /indicios/{indicioId} {
+        allow read: if curadorDa(inst);
+        allow write: if false;
+      }
+
+      match /relatorios/{relatorioId} {
+        allow read: if curadorDa(inst);
+        allow write: if false;
+      }
+
+      // Trilha de auditoria: legível para conferência, imutável pelo client.
+      match /logsAcesso/{logId} {
+        allow read: if curadorDa(inst);
+        allow write: if false;
+      }
+    }
+
+    // Qualquer caminho não previsto acima fica fechado.
+    match /{documento=**} {
+      allow read, write: if false;
+    }
+  }
+}

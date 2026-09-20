@@ -1,0 +1,15 @@
+rules_version = '2';
+
+/*
+ * Os PDFs de relatório ficam totalmente privados. O curador baixa por
+ * /api/admin/relatorios/[id]/pdf, que autentica, registra o log e faz o
+ * stream do arquivo; o compartilhamento pontual usa URL assinada de 30 min
+ * gerada no servidor. Nenhum client lê o bucket direto.
+ */
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
