@@ -60,7 +60,7 @@ export interface Idoso {
   dataNascimento: string;
   quartoNumero: string;
   curadorResponsavelId: string;
-  /** bcrypt — nunca o PIN em texto puro. Nunca sai do servidor. */
+  /** bcrypt, nunca o PIN em texto puro. Nunca sai do servidor. */
   pinHash: string;
   /** UUID gravado no 1º login; enquanto bater com o localStorage do device, pula o PIN. */
   dispositivoVinculadoId: string | null;

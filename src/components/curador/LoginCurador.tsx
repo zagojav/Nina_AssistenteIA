@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
+import CampoSenha from "@/components/CampoSenha";
 import { clientAuth } from "@/lib/firebase/client";
 
 export default function LoginCurador() {
@@ -44,16 +46,9 @@ export default function LoginCurador() {
             className="rounded-2xl border-2 border-borda px-4 py-3 text-lg outline-none focus:border-marca"
           />
         </label>
-        <label className="mt-4 flex flex-col gap-2 font-semibold">
-          Senha
-          <input
-            type="password"
-            autoComplete="current-password"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            className="rounded-2xl border-2 border-borda px-4 py-3 text-lg outline-none focus:border-marca"
-          />
-        </label>
+        <div className="mt-4">
+          <CampoSenha rotulo="Senha" valor={senha} aoMudar={setSenha} />
+        </div>
 
         {erro && (
           <p role="alert" className="mt-4 font-semibold text-alerta">
@@ -68,6 +63,14 @@ export default function LoginCurador() {
         >
           {enviando ? "Entrando…" : "Entrar"}
         </button>
+
+        {/* Sem isto, quem abre /curador por engano fica sem saída. */}
+        <Link
+          href="/"
+          className="mt-3 flex min-h-14 items-center justify-center rounded-2xl border-2 border-borda text-lg font-semibold"
+        >
+          ← Voltar ao início
+        </Link>
       </form>
     </main>
   );

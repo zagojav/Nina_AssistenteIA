@@ -6,7 +6,7 @@ import type { AcaoLog } from "@/lib/types";
 /**
  * Trilha de auditoria da LGPD: toda visualização, download ou edição de dado
  * sensível vira um registro imutável. Falha aqui não derruba a operação, mas
- * é logada — o registro perdido precisa ser visível na observabilidade.
+ * é logada: o registro perdido precisa ser visível na observabilidade.
  */
 export async function registrarAcesso(params: {
   instituicaoId: string;

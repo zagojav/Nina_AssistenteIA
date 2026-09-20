@@ -100,7 +100,7 @@ export async function PATCH(req: Request, { params }: Ctx) {
 
 /**
  * Exclusão a pedido da família (LGPD, art. 18): apaga conversas, mensagens,
- * indícios, relatórios, PDFs e o cadastro. O log de acesso da exclusão fica —
+ * indícios, relatórios, PDFs e o cadastro. O log de acesso da exclusão fica:
  * ele é o registro de que o pedido foi atendido, e não contém dado de saúde.
  */
 export async function DELETE(req: Request, { params }: Ctx) {

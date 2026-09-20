@@ -7,7 +7,7 @@ export const maxDuration = 800;
 
 /**
  * Política de retenção (LGPD, art. 15-16: o dado só fica enquanto a finalidade
- * durar). Os prazos são decisão da instituição — ajuste por ambiente:
+ * durar). Os prazos são decisão da instituição; ajuste por ambiente:
  *
  *   RETENCAO_CONVERSAS_DIAS  transcrições brutas (padrão 180 dias)
  *   RETENCAO_INDICIOS_DIAS   indícios já consolidados em relatório (padrão 730)

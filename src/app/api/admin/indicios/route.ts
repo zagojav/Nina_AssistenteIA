@@ -1,5 +1,6 @@
 import { curadorAutenticado, idosoDoCurador, respostaErro } from "@/lib/auth";
 import { db, paths } from "@/lib/firebase/admin";
+import { listarOrdenado } from "@/lib/consultas";
 import type { Indicio } from "@/lib/types";
 
 export async function GET(req: Request) {
@@ -9,23 +10,19 @@ export async function GET(req: Request) {
     const idosoId = url.searchParams.get("idosoId");
     const desde = url.searchParams.get("desde");
 
-    let consulta = db()
-      .collection(paths.indicios(curador.instituicaoId))
-      .orderBy("detectadoEm", "desc")
-      .limit(200);
+    const colecao = db().collection(paths.indicios(curador.instituicaoId));
+    if (idosoId) await idosoDoCurador(curador, idosoId);
 
-    if (idosoId) {
-      await idosoDoCurador(curador, idosoId);
-      let q = db()
-        .collection(paths.indicios(curador.instituicaoId))
-        .where("idosoId", "==", idosoId);
-      if (desde) q = q.where("detectadoEm", ">=", desde);
-      consulta = q.orderBy("detectadoEm", "desc").limit(200);
-    }
+    const indicios = await listarOrdenado<Omit<Indicio, "id">>(
+      idosoId ? colecao.where("idosoId", "==", idosoId) : colecao,
+      "detectadoEm",
+      200,
+    );
 
-    const snap = await consulta.get();
+    // O corte por data é aplicado depois da ordenação, para não precisar
+    // combinar desigualdade com filtro de igualdade (que exigiria índice).
     return Response.json({
-      indicios: snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Indicio, "id">) })),
+      indicios: desde ? indicios.filter((i) => i.detectadoEm >= desde) : indicios,
     });
   } catch (e) {
     return respostaErro(e);

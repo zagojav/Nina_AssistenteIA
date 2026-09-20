@@ -9,7 +9,7 @@ const fonte = Nunito_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Nina — Assistente de Curadores",
+  title: "Nina - Assistente de Curadores",
   description:
     "Conversas assistidas com residentes e relatórios de acompanhamento para a equipe de curadoria.",
   manifest: "/manifest.json",

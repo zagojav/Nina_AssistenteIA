@@ -18,6 +18,10 @@
   --color-borda: #dfdcd4;
 
   --font-sans: var(--font-sans-app), system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Altura mínima de alvo de toque nas telas do residente. */
+  --spacing-18: 4.5rem;
+  --spacing-22: 5.5rem;
 }
 
 :root {
@@ -37,14 +41,14 @@ body {
   font-family: var(--font-sans);
 }
 
-/* Foco sempre visível — navegação por teclado na área do curador. */
+/* Foco sempre visível, navegação por teclado na área do curador. */
 :focus-visible {
   outline: 3px solid var(--color-marca);
   outline-offset: 2px;
 }
 
 /*
- * Modo quiosque: trava o que faz o idoso "escapar" sem querer — seleção de
+ * Modo quiosque: trava o que faz o idoso "escapar" sem querer, seleção de
  * texto, menu de long-press, zoom por duplo toque e arrasto elástico.
  */
 body[data-kiosk="true"] {

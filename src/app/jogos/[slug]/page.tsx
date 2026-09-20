@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 
-import AssociacaoPalavras from "@/components/jogos/AssociacaoPalavras";
-import MemoriaCartas from "@/components/jogos/MemoriaCartas";
-import SequenciaNumerica from "@/components/jogos/SequenciaNumerica";
+import ListaDeCompras from "@/components/jogos/ListaDeCompras";
+import OlharRapido from "@/components/jogos/OlharRapido";
+import QualVemDepois from "@/components/jogos/QualVemDepois";
 
 export default async function PaginaJogo({
   params,
@@ -12,12 +12,12 @@ export default async function PaginaJogo({
   const { slug } = await params;
 
   switch (slug) {
-    case "memoria-cartas":
-      return <MemoriaCartas slug={slug} />;
-    case "sequencia-numerica":
-      return <SequenciaNumerica slug={slug} />;
-    case "associacao-palavras":
-      return <AssociacaoPalavras slug={slug} />;
+    case "olhar-rapido":
+      return <OlharRapido slug={slug} />;
+    case "lista-de-compras":
+      return <ListaDeCompras slug={slug} />;
+    case "qual-vem-depois":
+      return <QualVemDepois slug={slug} />;
     default:
       notFound();
   }

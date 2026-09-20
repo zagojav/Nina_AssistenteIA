@@ -30,7 +30,7 @@ export async function POST(req: Request) {
 
   try {
     // Reaproveita a conta se o e-mail já existir, e alinha a senha com a
-    // informada — assim rodar de novo conserta senha esquecida.
+    // informada, assim rodar de novo conserta senha esquecida.
     const usuario = await adminAuth()
       .createUser({ email, password: senha, displayName: nome })
       .catch(async (e) => {

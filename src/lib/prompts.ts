@@ -9,7 +9,7 @@ interface ContextoNina {
 
 /**
  * System prompt da Nina (Haiku). As regras rígidas existem porque o idoso não
- * pode perceber que está sendo observado — qualquer tom investigativo ou
+ * pode perceber que está sendo observado, qualquer tom investigativo ou
  * menção clínica contamina a conversa e a análise.
  */
 export function promptNina({
@@ -30,7 +30,7 @@ REGRAS RÍGIDAS (nunca quebre):
 - Uma pergunta por vez, nunca acumule perguntas na mesma fala
 - Se o idoso mudar de assunto ou não quiser responder, siga o fluxo dele,
   não insista no tópico original
-- Nunca afirme um fato que você não tem como saber — data, dia da semana,
+- Nunca afirme um fato que você não tem como saber, data, dia da semana,
   horário, clima, quem visitou, o que foi servido. Você não tem acesso a nada
   disso. Se perguntarem, diga com naturalidade que não sabe e devolva o assunto
   para a pessoa ("essa eu não sei dizer, e você, o que acha?")
@@ -65,7 +65,7 @@ export const INSTRUCAO_ENCERRAMENTO =
 
 /**
  * Prompt de análise (Sonnet). Trava central do produto: a IA não decide o que
- * é relevante — ela só pode marcar um indício se ele casar com um padrão da
+ * é relevante, ela só pode marcar um indício se ele casar com um padrão da
  * base de referência científica fixa recebida aqui.
  */
 export function promptAnalise(padroes: PadraoReferencia[]): string {
@@ -99,9 +99,9 @@ REGRAS ABSOLUTAS:
    clínica nem prognóstico.
 
 Analise a transcrição COMPLETA. Um mesmo padrão pode gerar no máximo um indício
-por conversa — se ocorrer várias vezes, agregue na mesma descrição.
+por conversa, se ocorrer várias vezes, agregue na mesma descrição.
 
-FORMATO DA RESPOSTA — responda APENAS com um objeto JSON, sem texto em volta,
+FORMATO DA RESPOSTA, responda APENAS com um objeto JSON, sem texto em volta,
 sem cercas de código, exatamente neste formato:
 
 {
@@ -120,7 +120,7 @@ Sem nenhuma correspondência, responda exatamente: {"indicios": []}`;
 
 /**
  * Prompt do relatório (Sonnet). Linguagem clínica objetiva para o curador,
- * ainda sem diagnosticar — o relatório descreve e cita fonte, não conclui.
+ * ainda sem diagnosticar, o relatório descreve e cita fonte, não conclui.
  */
 export const PROMPT_RELATORIO = `Você redige relatórios de acompanhamento para curadores de casa de repouso.
 
@@ -140,7 +140,7 @@ REGRAS:
 
 FORMATAÇÃO (o relatório vira PDF com um renderizador simples):
 - Use apenas títulos "## ", listas com "- " e parágrafos.
-- NUNCA use tabela markdown, bloco de código ou nota de rodapé — sai como
+- NUNCA use tabela markdown, bloco de código ou nota de rodapé, sai como
   texto cru no PDF.
 - Não use negrito, itálico nem asterisco de ênfase.
 - Termine sempre com a nota: "Este documento descreve observações
@@ -159,6 +159,6 @@ ESTRUTURA (use exatamente estes títulos, em markdown):
 export const PROMPT_RESUMO = `Resuma a conversa abaixo em no máximo 3 frases, em português do Brasil.
 Registre só assuntos e fatos citados pela pessoa (comida, visitas, atividades,
 pessoas, humor relatado) para que a assistente possa retomar o papo depois.
-Não registre nada que a assistente tenha afirmado — só o que a pessoa contou.
+Não registre nada que a assistente tenha afirmado, só o que a pessoa contou.
 Não avalie, não interprete, não mencione saúde, memória ou comportamento.
 Responda apenas com o resumo, sem preâmbulo.`;

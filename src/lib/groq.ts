@@ -3,7 +3,7 @@ import "server-only";
 import Groq from "groq-sdk";
 
 /**
- * Cliente único da Groq. A chave só existe no servidor — nenhuma rota devolve,
+ * Cliente único da Groq. A chave só existe no servidor, nenhuma rota devolve,
  * loga ou repassa o valor de GROQ_API_KEY ao client.
  */
 let cliente: Groq | undefined;
@@ -26,7 +26,7 @@ export function groq(): Groq {
  *
  * O candidato natural para a conversa era o `openai/gpt-oss-20b`, menor e mais
  * barato. Ele foi descartado por instabilidade medida: em 12 chamadas com o
- * prompt real da Nina, 5 falharam com HTTP 400 `tool_use_failed` — o modelo
+ * prompt real da Nina, 5 falharam com HTTP 400 `tool_use_failed`: o modelo
  * emite um token de canal malformado que a Groq lê como chamada de ferramenta.
  * Na mesma bateria o 120b falhou 0 de 12. Numa tela que um idoso usa sozinho,
  * 40% de erro não se resolve com retry.
@@ -44,12 +44,12 @@ export const MODELO_ANALISE = "openai/gpt-oss-120b";
 
 /**
  * Os modelos gpt-oss raciocinam antes de responder. `hidden` mantém esse
- * rascunho fora da resposta — o idoso não pode ler a IA "pensando" sobre ele,
+ * rascunho fora da resposta. O idoso não pode ler a IA "pensando" sobre ele,
  * e o relatório não pode carregar raciocínio solto no meio do texto clínico.
  *
  * Atenção: o raciocínio oculto continua consumindo `max_tokens`. Com esforço
  * padrão e teto apertado o modelo gasta a cota inteira pensando e devolve
- * conteúdo VAZIO, sem erro nenhum — foi o que aconteceu na conversa antes de
+ * conteúdo VAZIO, sem erro nenhum. Foi o que aconteceu na conversa antes de
  * baixar o esforço. Toda chamada aqui precisa de teto folgado.
  */
 export const RACIOCINIO_OCULTO = "hidden" as const;

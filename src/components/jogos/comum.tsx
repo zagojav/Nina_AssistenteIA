@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+import { BotaoGrande, LinkGrande, Voltar } from "@/components/ui";
 import type { Dificuldade, Jogo } from "@/lib/types";
 
 /** Resolve o slug da rota para o doc do catálogo global de jogos. */
@@ -50,14 +50,21 @@ export async function salvarSessao(jogoId: string, resultado: ResultadoPartida) 
   }
 }
 
-/** Cronômetro de resposta: mede o intervalo entre jogadas. */
+/**
+ * Cronômetro de resposta: mede o intervalo entre jogadas.
+ *
+ * O objeto devolvido é estável entre renders (useRef, não literal novo a cada
+ * vez). Sem isso, qualquer `useEffect` que o liste como dependência rodaria a
+ * cada render, e nos jogos esses efeitos controlam `setTimeout` de exibição
+ * de estímulo e contagem regressiva, que se reiniciariam sem parar.
+ */
 export function useCronometro() {
-  // Inicializa preguiçosamente: ler o relógio durante o render tornaria o
-  // componente impuro, e a primeira jogada só acontece depois da montagem.
   const marco = useRef<number | null>(null);
   const tempos = useRef<number[]>([]);
 
-  return {
+  // Inicializador de estado: roda uma vez e a identidade nunca muda, sem
+  // precisar ler um ref durante o render.
+  const [api] = useState(() => ({
     reiniciar() {
       marco.current = Date.now();
     },
@@ -71,33 +78,32 @@ export function useCronometro() {
       const soma = tempos.current.reduce((a, b) => a + b, 0);
       return Number((soma / tempos.current.length).toFixed(2));
     },
-  };
+  }));
+
+  return api;
 }
 
 export function MolduraJogo({
   titulo,
   instrucao,
+  voltarPara = "/jogos",
   children,
 }: {
   titulo: string;
   instrucao: string;
+  voltarPara?: string;
   children: React.ReactNode;
 }) {
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="flex items-center justify-between gap-4 border-b border-borda bg-superficie px-5 py-4">
-        <div>
-          <h1 className="text-2xl font-bold text-marca">{titulo}</h1>
+        <div className="min-w-0">
+          <h1 className="truncate text-2xl font-bold text-marca">{titulo}</h1>
           <p className="text-base text-tinta-suave">{instrucao}</p>
         </div>
-        {/* "Voltar", não "Sair": sair do app é só pela conversa, com senha. */}
-        <Link
-          href="/jogos"
-          className="min-h-12 shrink-0 rounded-2xl border-2 border-borda px-5 py-2 text-lg font-semibold"
-        >
-          Voltar
-        </Link>
+        <Voltar href={voltarPara} rotulo="Jogos" />
       </header>
+
       <main className="flex flex-1 flex-col items-center px-5 py-8">{children}</main>
     </div>
   );
@@ -107,11 +113,13 @@ export function TelaFinal({
   acertos,
   erros,
   pontuacao,
+  destaque,
   aoJogarDeNovo,
 }: {
   acertos: number;
   erros: number;
   pontuacao: number;
+  destaque?: string;
   aoJogarDeNovo: () => void;
 }) {
   return (
@@ -119,10 +127,8 @@ export function TelaFinal({
       aria-live="polite"
       className="mx-auto flex w-full max-w-md flex-col items-center gap-6 rounded-3xl border-2 border-borda bg-superficie p-8 text-center"
     >
-      <p className="text-6xl" role="img" aria-label="Comemoração">
-        🎉
-      </p>
       <h2 className="text-3xl font-bold">Muito bem!</h2>
+
       <dl className="grid w-full grid-cols-3 gap-3 text-lg">
         <div className="rounded-2xl bg-marca-clara p-4">
           <dt className="text-tinta-suave">Acertos</dt>
@@ -137,20 +143,19 @@ export function TelaFinal({
           <dd className="text-2xl font-bold">{pontuacao}</dd>
         </div>
       </dl>
+
+      {destaque && <p className="text-lg text-tinta-suave">{destaque}</p>}
+
       <div className="flex w-full flex-col gap-3">
-        <button
-          type="button"
-          onClick={aoJogarDeNovo}
-          className="min-h-16 rounded-2xl bg-marca text-xl font-bold text-white"
-        >
+        <BotaoGrande onClick={aoJogarDeNovo}>
           Jogar de novo
-        </button>
-        <Link
-          href="/jogos"
-          className="flex min-h-16 items-center justify-center rounded-2xl border-2 border-borda text-xl font-semibold"
-        >
+        </BotaoGrande>
+        <LinkGrande href="/jogos" variante="secundario">
           Escolher outro jogo
-        </Link>
+        </LinkGrande>
+        <LinkGrande href="/conversa" variante="suave">
+          Voltar para a Nina
+        </LinkGrande>
       </div>
     </section>
   );

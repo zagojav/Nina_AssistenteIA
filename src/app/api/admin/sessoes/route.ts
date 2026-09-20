@@ -1,5 +1,6 @@
 import { curadorAutenticado, idosoDoCurador, respostaErro } from "@/lib/auth";
 import { db, paths } from "@/lib/firebase/admin";
+import { listarOrdenado } from "@/lib/consultas";
 import type { SessaoJogo } from "@/lib/types";
 
 /** Histórico de partidas de um idoso, para a área do curador. */
@@ -12,15 +13,13 @@ export async function GET(req: Request) {
     }
     await idosoDoCurador(curador, idosoId);
 
-    const snap = await db()
-      .collection(paths.sessoesJogo(curador.instituicaoId, idosoId))
-      .orderBy("iniciadaEm", "desc")
-      .limit(100)
-      .get();
+    const sessoes = await listarOrdenado<Omit<SessaoJogo, "id">>(
+      db().collection(paths.sessoesJogo(curador.instituicaoId, idosoId)),
+      "iniciadaEm",
+      100,
+    );
 
-    return Response.json({
-      sessoes: snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<SessaoJogo, "id">) })),
-    });
+    return Response.json({ sessoes });
   } catch (e) {
     return respostaErro(e);
   }

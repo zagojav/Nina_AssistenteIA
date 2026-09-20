@@ -46,7 +46,7 @@ export function bucket() {
 }
 
 /* ------------------------------------------------------------------ *
- * Helpers de caminho — todo dado sensível vive sob uma instituição.   *
+ * Helpers de caminho, todo dado sensível vive sob uma instituição.   *
  * ------------------------------------------------------------------ */
 
 export const paths = {

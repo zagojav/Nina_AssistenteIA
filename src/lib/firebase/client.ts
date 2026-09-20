@@ -15,7 +15,7 @@ const config = {
 /**
  * O client só usa Firebase para Auth (login do curador).
  * Toda leitura/escrita de dado sensível passa por rotas de API que validam o
- * ID token no servidor — o client nunca fala direto com o Firestore.
+ * ID token no servidor, o client nunca fala direto com o Firestore.
  */
 export function firebaseApp() {
   return getApps().length ? getApp() : initializeApp(config);

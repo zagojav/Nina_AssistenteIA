@@ -33,7 +33,7 @@ export async function POST(req: Request) {
       curadorId: curador.id,
       idosoId,
       acao: "gerou_relatorio",
-      detalhe: `${tipo} — ${relatorio.id}`,
+      detalhe: `${tipo}: ${relatorio.id}`,
     });
 
     return Response.json({ id: relatorio.id, tipo, qtdIndicios: relatorio.indiciosIncluidos.length });

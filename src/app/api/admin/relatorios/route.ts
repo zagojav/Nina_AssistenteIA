@@ -1,5 +1,6 @@
 import { curadorAutenticado, idosoDoCurador, respostaErro } from "@/lib/auth";
 import { db, paths } from "@/lib/firebase/admin";
+import { listarOrdenado } from "@/lib/consultas";
 import type { Relatorio } from "@/lib/types";
 
 /** Lista relatórios da instituição, opcionalmente filtrando por idoso. */
@@ -8,26 +9,19 @@ export async function GET(req: Request) {
     const curador = await curadorAutenticado(req);
     const idosoId = new URL(req.url).searchParams.get("idosoId");
 
-    let consulta = db()
-      .collection(paths.relatorios(curador.instituicaoId))
-      .orderBy("criadoEm", "desc")
-      .limit(100);
+    const colecao = db().collection(paths.relatorios(curador.instituicaoId));
+    if (idosoId) await idosoDoCurador(curador, idosoId);
 
-    if (idosoId) {
-      await idosoDoCurador(curador, idosoId);
-      consulta = db()
-        .collection(paths.relatorios(curador.instituicaoId))
-        .where("idosoId", "==", idosoId)
-        .orderBy("criadoEm", "desc")
-        .limit(100);
-    }
+    const docs = await listarOrdenado<Omit<Relatorio, "id">>(
+      idosoId ? colecao.where("idosoId", "==", idosoId) : colecao,
+      "criadoEm",
+      100,
+    );
 
-    const snap = await consulta.get();
     // O conteúdo completo só sai na rota de leitura individual, que grava log.
-    const relatorios = snap.docs.map((d) => {
-      const r = d.data() as Relatorio;
+    const relatorios = docs.map((r) => {
       return {
-        id: d.id,
+        id: r.id,
         idosoId: r.idosoId,
         tipo: r.tipo,
         periodoInicio: r.periodoInicio,

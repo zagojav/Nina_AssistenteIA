@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 
 import GuardaKiosk from "@/components/GuardaKiosk";
 import SenhaCurador from "@/components/SenhaCurador";
+import { LinkGrande } from "@/components/ui";
 import { esquecerDispositivo } from "@/lib/dispositivo";
 import { calarBoca, criarReconhecimento, falar, vozDisponivel } from "@/lib/voz";
 import type { ModoEntrada } from "@/lib/types";
@@ -176,7 +177,7 @@ export default function Conversa() {
   }
 
   /**
-   * Saída do tablet — só depois de a senha do curador conferir.
+   * Saída do tablet, só depois de a senha do curador conferir.
    *
    * Desfaz o vínculo do aparelho junto com a sessão. Sem isso a tela inicial
    * reconheceria o dispositivo e entraria de novo na mesma conta na hora,
@@ -220,6 +221,14 @@ export default function Conversa() {
             )}
           </div>
 
+          <div className="flex items-center gap-2">
+            <Link
+              href="/jogos"
+              className="flex min-h-12 items-center gap-2 rounded-2xl border-2 border-borda bg-fundo px-4 text-lg font-bold text-tinta transition hover:border-marca"
+            >
+              Jogos
+            </Link>
+
           {temVoz && (
             <div
               className="flex rounded-2xl border-2 border-borda bg-fundo p-1"
@@ -241,6 +250,7 @@ export default function Conversa() {
               ))}
             </div>
           )}
+          </div>
         </header>
 
         <main className="flex-1 overflow-y-auto px-5 py-6">
@@ -287,15 +297,15 @@ export default function Conversa() {
           <div className="mx-auto flex w-full max-w-2xl flex-col gap-3">
             {encerrada ? (
               <>
-                <p className="text-center text-xl font-semibold">
+                <p className="text-center text-2xl font-semibold">
                   Conversa encerrada. Até logo!
                 </p>
-                <Link
+                <LinkGrande
                   href="/jogos"
-                  className="flex min-h-16 items-center justify-center rounded-2xl bg-marca text-xl font-bold text-white"
+                  dica="Exercícios curtos para a cabeça"
                 >
                   Ir para os jogos
-                </Link>
+                </LinkGrande>
               </>
             ) : modo === "voz" ? (
               <>
@@ -306,11 +316,18 @@ export default function Conversa() {
                   type="button"
                   onClick={alternarMicrofone}
                   disabled={pensando || !conversaId}
-                  className={`min-h-20 w-full rounded-2xl text-2xl font-bold text-white transition disabled:opacity-40 ${
-                    ouvindo ? "bg-destaque" : "bg-marca"
+                  className={`flex min-h-22 w-full flex-col items-center justify-center gap-1 rounded-3xl border-2 text-2xl font-bold text-white transition disabled:opacity-40 ${
+                    ouvindo
+                      ? "border-destaque bg-destaque"
+                      : "border-marca bg-marca hover:bg-marca-escura"
                   }`}
                 >
-                  {ouvindo ? "Terminei de falar" : "Falar com a Nina"}
+                  <span className="flex items-center gap-3">
+                    {ouvindo ? "Terminei de falar" : "Falar com a Nina"}
+                  </span>
+                  <span className="text-base font-normal opacity-90">
+                    {ouvindo ? "Toque quando terminar" : "Toque e fale no seu tempo"}
+                  </span>
                 </button>
               </>
             ) : (
@@ -330,12 +347,12 @@ export default function Conversa() {
                   onChange={(e) => setRascunho(e.target.value)}
                   placeholder="Escreva aqui…"
                   disabled={pensando || !conversaId}
-                  className="min-h-16 flex-1 rounded-2xl border-2 border-borda bg-fundo px-5 text-xl outline-none focus:border-marca"
+                  className="min-h-18 flex-1 rounded-2xl border-2 border-borda bg-fundo px-5 text-xl outline-none focus:border-marca"
                 />
                 <button
                   type="submit"
                   disabled={pensando || !rascunho.trim() || !conversaId}
-                  className="min-h-16 rounded-2xl bg-marca px-8 text-xl font-bold text-white disabled:opacity-40"
+                  className="flex min-h-18 items-center justify-center gap-2 rounded-2xl bg-marca px-8 text-xl font-bold text-white transition hover:bg-marca-escura disabled:opacity-40"
                 >
                   Enviar
                 </button>
@@ -351,9 +368,9 @@ export default function Conversa() {
             <button
               type="button"
               onClick={() => setPedindoSaida(true)}
-              className="mx-auto mt-1 min-h-12 rounded-xl px-5 text-base font-semibold text-tinta-suave underline decoration-borda underline-offset-4"
+              className="mx-auto mt-1 flex min-h-14 items-center gap-2 rounded-2xl px-5 text-base font-semibold text-tinta-suave transition hover:bg-marca-clara hover:text-marca"
             >
-              Sair desta conta (senha do curador)
+              Sair desta conta (precisa da senha do curador)
             </button>
           </div>
         </footer>

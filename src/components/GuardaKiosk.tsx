@@ -9,11 +9,11 @@ import SenhaCurador from "@/components/SenhaCurador";
  *
  * O que dá pra travar no navegador está aqui: tela cheia, gesto de voltar
  * interceptado, e bloqueio ao perder o foco. Se o app sair para segundo plano,
- * ao voltar só a senha de um CURADOR destrava — nunca o PIN do próprio idoso,
+ * ao voltar só a senha de um CURADOR destrava, nunca o PIN do próprio idoso,
  * senão a trava não serviria de nada.
  *
  * Limite conhecido (avisar a instituição): no iOS o swipe de sair do app não é
- * bloqueável — o Safari não expõe isso. A tela de senha ao voltar é a
+ * bloqueável, o Safari não expõe isso. A tela de senha ao voltar é a
  * contenção possível. No Android, com o PWA instalado e definido como app
  * padrão (ou fixado na tela via Fixação de Tela), o comportamento chega perto
  * de um quiosque real.
@@ -47,7 +47,7 @@ export default function GuardaKiosk({ ativo }: { ativo: boolean }) {
     window.addEventListener("popstate", aoVoltar);
 
     // Perdeu o foco: ao voltar, exige senha do curador. `visibilitychange`
-    // é disparado no document — escutar no window depende de propagação.
+    // é disparado no document; escutar no window depende de propagação.
     const aoEsconder = () => {
       if (document.visibilityState === "hidden") setBloqueado(true);
     };

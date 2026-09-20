@@ -1,8 +1,8 @@
-# Nina — Assistente de Curadores
+# Nina
 
 PWA em Next.js + Firebase + Groq onde residentes de uma casa de repouso conversam com
 uma assistente (Nina) por texto ou voz, e a equipe de curadoria recebe
-relatórios em PDF com **indícios comportamentais observados** — nunca
+relatórios em PDF com **indícios comportamentais observados**, nunca
 diagnósticos.
 
 > **Regra que sustenta o produto:** a IA não decide o que é relevante. Ela
@@ -15,36 +15,35 @@ diagnósticos.
 ## Como funciona
 
 ```
-Residente (tablet)                Servidor (Next.js)              Curador
-─────────────────                 ──────────────────              ───────
-nome + PIN  ──────────────────▶  bcrypt + cookie de sessão
-                                 vincula o tablet (UUID)
-                                 próximos acessos: sem PIN
+RESIDENTE (tablet)
+  nome + PIN  ->  bcrypt valida, cookie de sessao, tablet fica vinculado
+                  (dai em diante entra sem PIN)
 
-conversa ◀── Nina (llama-3.1-8b) ─ system prompt com regras rígidas
-                                 categoria de foco escolhida no servidor
-                                 3 a 5 trocas, despedida automática
+  conversa    ->  Nina responde (gpt-oss-120b, esforco baixo)
+                  categoria de foco escolhida no servidor
+                  3 a 5 trocas, despedida automatica
 
-                                 ▼ fim da conversa
-                                 transcrição COMPLETA
-                                 + padroesReferencia ativos
-                                          │
-                              análise (llama-3.3-70b) ──▶ indícios
-                                          │              (só os que batem
-                                          │               com um padrão)
-                                          ▼
-                            relatório (llama-3.3-70b) ─▶ PDF ─▶ Storage privado
-                                          │
-                                 resumo curto ──▶ contexto da próxima conversa
-                                                                    │
-                                                        painel ◀────┘
-                                                        baixar / e-mail / WhatsApp
+  ao encerrar
+      |
+      v
+SERVIDOR
+  transcricao COMPLETA + padroes de referencia ativos
+      |
+      +-> analise (gpt-oss-120b) -> indicios
+      |      so os que casam com um padrao da base; o resto e descartado
+      |
+      +-> relatorio (gpt-oss-120b) -> PDF -> Storage privado
+      |
+      +-> resumo curto -> contexto da proxima conversa
+                          (nunca entra na analise)
+      |
+      v
+CURADOR (painel)
+  ler relatorio, baixar PDF, enviar por e-mail ou WhatsApp
 ```
 
-A transcrição **nunca** é resumida antes da análise — o resumo existe só para a
+A transcricao nunca e resumida antes da analise. O resumo existe so para a
 Nina retomar o papo na conversa seguinte.
-
----
 
 ## Stack e decisões
 
@@ -54,8 +53,8 @@ Nina retomar o papo na conversa seguinte.
 | Cloud Functions (`functions/`) só para o agendamento | Consolidados e retenção disparam as rotas protegidas por segredo. Em deploy na Vercel, `vercel.json` já faz isso e o pacote é dispensável. |
 | Client nunca fala com o Firestore | Toda leitura de dado sensível passa por rota que valida o ID token e grava log de acesso. As Firestore Rules são a segunda camada, não a única. |
 | PDFs privados no Storage | O curador baixa por rota autenticada; o compartilhamento pontual usa URL assinada de 30 minutos. |
-| `llama-3.1-8b-instant` na conversa, `llama-3.3-70b-versatile` na análise (Groq) | A conversa roda a cada mensagem e precisa ser barata e rápida; a análise e a redação precisam de mais raciocínio. |
-| Saída da análise em modo JSON + validação com zod | O `llama-3.3-70b-versatile` garante JSON sintático, não o contrato. O zod é a trava: saída fora do formato vira zero indício, nunca indício inventado. |
+| `openai/gpt-oss-120b` nos três usos, com esforço de raciocínio diferente | O modelo menor (`gpt-oss-20b`) falhou em 5 de 12 chamadas com `tool_use_failed`. A conversa roda em esforço baixo (rápida e barata), a análise e o relatório em esforço padrão. |
+| Saída da análise em modo JSON + validação com zod | O modo JSON garante JSON sintático, não o contrato. O zod é a trava: saída fora do formato vira zero indício, nunca indício inventado. |
 | Sem modo escuro | O público principal é idoso e muitos tablets ficam em modo escuro permanente; uma paleta só garante o contraste. |
 
 ---
@@ -67,8 +66,14 @@ Nina retomar o papo na conversa seguinte.
 Crie uma chave em <https://console.groq.com/keys> e coloque em `GROQ_API_KEY`.
 Os dois modelos usados estão em `src/lib/groq.ts`:
 
-- `llama-3.1-8b-instant` — conversa da Nina
-- `llama-3.3-70b-versatile` — análise de indícios e redação do relatório
+- `openai/gpt-oss-120b` com esforço baixo: conversa da Nina
+- `openai/gpt-oss-120b` com esforço padrão: análise de indícios e relatório
+
+O catálogo de modelos varia por conta. Para ver o da sua chave:
+
+```bash
+curl https://api.groq.com/openai/v1/models -H "Authorization: Bearer $GROQ_API_KEY"
+```
 
 ### 2. Firebase
 
@@ -103,7 +108,7 @@ firebase deploy --only firestore:rules,firestore:indexes,storage
 ```
 
 O fluxo do residente (login, conversa, análise, relatório) **não depende de
-índice composto** — isso foi deliberado, porque índice faltando derrubava a
+índice composto**, isso foi deliberado, porque índice faltando derrubava a
 tela que o idoso usa sozinho. Os quatro índices restantes servem às listagens
 da área do curador; sem eles, essas telas mostram um aviso com o link de
 criação em vez de um erro genérico.
@@ -118,8 +123,8 @@ curl -X POST http://localhost:3000/api/seed \
   -H "content-type: application/json" \
   -d '{
     "instituicao": { "nome": "Casa Bem Viver", "endereco": "Rua X, 100" },
-    "curador": { "nome": "Ana Souza", "email": "ana@casa.com", "senha": "trocar-depois", "cargo": "Enfermeira" },
-    "idosoDemo": { "nome": "João", "sobrenome": "Silva", "pin": "1234" }
+    "curador": { "nome": "Ana", "email": "ana@casa.com", "senha": "trocar-depois", "cargo": "Enfermeira" },
+    "idosoDemo": { "nome": "Joao", "sobrenome": "Souza", "pin": "1234" }
   }'
 ```
 
@@ -128,7 +133,7 @@ curador e um residente de teste. Copie o `instituicaoId` devolvido para
 `INSTITUICAO_ID` no `.env.local`.
 
 O seed é repetível: rodar de novo não duplica nada. O residente é criado
-mesmo que o Firebase Auth ainda não esteja ativo — ele entra por PIN e não
+mesmo que o Firebase Auth ainda não esteja ativo, ele entra por PIN e não
 depende de Auth. Só o curador depende.
 
 Para adicionar curadores depois (ou corrigir uma senha):
@@ -136,7 +141,7 @@ Para adicionar curadores depois (ou corrigir uma senha):
 ```bash
 curl -X POST http://localhost:3000/api/seed/curador \
   -H "x-seed-secret: $SEED_SECRET" -H "content-type: application/json" \
-  -d '{"nome":"Fulana","email":"fulana@casa.com","senha":"...","cargo":"Enfermeira"}'
+  -d '{"nome":"Ana","email":"ana@casa.com","senha":"...","cargo":"Enfermeira"}'
 ```
 
 **Remova o `SEED_SECRET`** do ambiente quando terminar de provisionar.
@@ -169,10 +174,36 @@ DSM-5-TR, MMSE (Folstein et al., 1975), Cornell Scale (Alexopoulos et al.,
 OMS.
 
 **Revise esta lista com a equipe clínica antes de usar em produção.** É ela que
-define o que o sistema é capaz de observar — nenhum item é critério
+define o que o sistema é capaz de observar, nenhum item é critério
 diagnóstico, e nenhum, isoladamente, significa doença.
 
 ---
+
+## Jogos cognitivos
+
+Os três jogos replicam os três domínios treinados no **ACTIVE** (Advanced
+Cognitive Training for Independent and Vital Elderly), o maior ensaio
+randomizado de treino cognitivo em idosos, com 2.832 participantes de 65 a 94
+anos e acompanhamento de 20 anos.
+
+| Jogo | Domínio | Paradigma replicado |
+|---|---|---|
+| **Olhar rápido** | Velocidade de processamento | Useful Field of View (UFOV): identificar a figura central e localizar o alvo periférico, com o tempo de exibição encurtando a cada acerto |
+| **Lista de compras** | Memória episódica verbal | Lista agrupada por categoria com a estratégia de organização ensinada, depois reconhecimento entre distratores |
+| **Qual vem depois?** | Raciocínio indutivo | Completar séries com padrão serial (números, letras, formas), geradas a cada partida |
+
+O braço de velocidade de processamento foi o que mostrou os efeitos mais
+duradouros: menor risco de queda em dez anos e menor incidência de demência
+em dez e vinte anos de seguimento.
+
+Referências: Ball K et al., *JAMA* 2002;288(18):2271-81 · Rebok GW et al.,
+*J Am Geriatr Soc* 2014;62(1):16-24 · Edwards JD et al., *Alzheimers Dement
+(N Y)* 2017;3(4):603-11.
+
+O tempo de exibição do Olhar rápido é adaptativo: encurta 25% a cada acerto e
+alarga 40% a cada erro, então o exercício se ajusta ao ritmo da pessoa em vez
+de ter níveis fixos. Nenhum dos três alimenta o motor de indícios, a
+performance fica isolada em `sessoesJogo`, como especificado.
 
 ## Quiosque: o que dá e o que não dá
 
@@ -184,7 +215,7 @@ long-press.
 
 - **Android:** com o PWA instalado e a Fixação de Tela ligada, chega perto de um
   quiosque real.
-- **iOS:** o swipe para sair do app **não é bloqueável** — o Safari não expõe
+- **iOS:** o swipe para sair do app **não é bloqueável**, o Safari não expõe
   isso. A contenção possível é a tela de senha ao voltar. Avise a instituição.
 
 ---
@@ -221,7 +252,7 @@ com o jurídico; e anonimização antes de usar conversa real em teste.
 | `/api/cron/retencao` | 4h30 | Aplica a política de retenção |
 
 Autenticadas por `CRON_SECRET` (`Authorization: Bearer` ou `x-cron-secret`).
-Use **um** agendador: `vercel.json` **ou** `functions/` — os dois juntos geram
+Use **um** agendador: `vercel.json` **ou** `functions/`, os dois juntos geram
 relatório duplicado.
 
 ---
@@ -260,35 +291,33 @@ src/components/
 
 ## Estado atual
 
-**Verificado ponta a ponta com credenciais reais:**
+**Verificado com credenciais reais:**
 
-- Login do residente por PIN, com e sem acento no nome, e vínculo de tablet
-- Conversa completa de 5 trocas via API, com rodízio de categoria funcionando
-  (alimentação → sono → memória recente → orientação no tempo)
-- Análise contra os 15 padrões do Firestore: 4 indícios por conversa, todos
-  casando com padrão existente, nenhum `padraoId` inventado
-- Relatório redigido, gravado, e resumo da conversa persistido no residente
-- PDF gerado e conferido visualmente (acentuação, seções, paginação, rodapé)
+- Login do curador (`guilherme.rezendezago@gmail.com`) e todas as rotas admin
+- Login do residente por PIN, com e sem acento, e vínculo de tablet
+- Conversa completa com rodízio de categoria, análise com 4 indícios casando
+  com a base, relatório gravado e PDF conferido visualmente
+- As quatro rotas que antes davam `FAILED_PRECONDITION` respondem 200
+- Catálogo de jogos servindo os três novos, e partida gravada em `sessoesJogo`
+- Todas as páginas respondem: `/`, `/conversa`, `/jogos`, os três jogos,
+  `/curador` e 404 em rota inexistente
 
-**Pendente de dois cliques no Console do Firebase:**
+**Nenhum índice composto é necessário.** As listagens filtram por igualdade
+(índice automático de campo único) e ordenam em memória com teto de leitura -
+ver `src/lib/consultas.ts`. `firestore.indexes.json` está vazio de propósito.
 
-1. **Authentication** não foi inicializado (`CONFIGURATION_NOT_FOUND`). Sem
-   isso não há login de curador. Ative em *Authentication → Começar →
-   E-mail/senha* e rode `/api/seed/curador`.
-2. **Storage** não tem bucket criado. O relatório continua funcionando: o PDF
-   é montado na hora no download, a partir do texto guardado no Firestore. Com
-   o bucket criado, ele passa a ser arquivado também.
+**Não verificado:** aparência das telas (não há navegador neste ambiente, a
+verificação foi por código e por HTTP), envio de relatório por e-mail (exige
+`RESEND_API_KEY`) e as rotinas agendadas.
 
-**Não verificado:** área do curador (depende do item 1), envio de relatório por
-e-mail (exige `RESEND_API_KEY`, vazia) e as rotinas agendadas.
+**Opcional:** criar o bucket em Console → Storage faz o PDF ser arquivado além
+de gerado sob demanda.
 
-**Decisão em aberto:** a Nina hoje não afirma nem corrige data, dia da semana
-ou qualquer fato que não tenha como saber — ela devolve a pergunta. Isso evita
-que ela informe uma data errada a um residente desorientado. Se a instituição
-preferir que ela saiba a data real e confirme com naturalidade, é uma linha no
-`promptNina` mais a data no contexto.
+**Decisão em aberto:** a Nina não afirma nem corrige data, dia da semana ou
+qualquer fato que não tenha como saber, ela devolve a pergunta. Se a
+instituição preferir que ela saiba a data real, é uma linha no `promptNina`
+mais a data no contexto.
 
-**Fora de escopo por enquanto:** performance dos jogos não alimenta o motor de
-indícios (fica isolada em `sessoesJogo`, como especificado); o freio de
-tentativas de PIN é por instância (`src/lib/throttle.ts`) e precisa virar
-contador compartilhado antes de escalar horizontalmente.
+**Fora de escopo:** performance dos jogos não alimenta o motor de indícios; o
+freio de tentativas de PIN é por instância (`src/lib/throttle.ts`) e precisa
+virar contador compartilhado antes de escalar horizontalmente.

@@ -4,7 +4,7 @@ const CHAVE = "nina_dispositivo_id";
 
 /**
  * UUID do tablet, gravado no localStorage no primeiro login e enviado nos
- * acessos seguintes. É ele que permite pular o PIN — e é ele que o curador
+ * acessos seguintes. É ele que permite pular o PIN, e é ele que o curador
  * invalida no admin quando troca o aparelho.
  */
 export function dispositivoId(): string {

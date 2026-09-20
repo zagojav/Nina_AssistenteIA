@@ -2,7 +2,7 @@ import "server-only";
 
 /**
  * Cada deploy atende uma casa de repouso. O tablet do idoso não tem como
- * escolher instituição, então ela vem do ambiente — e é ela que delimita o
+ * escolher instituição, então ela vem do ambiente, e é ela que delimita o
  * escopo de toda busca feita a partir do login por PIN.
  */
 export function instituicaoPadrao(): string {

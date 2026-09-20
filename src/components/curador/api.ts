@@ -22,7 +22,7 @@ export function useCurador() {
 
 /**
  * Toda chamada da área admin leva o ID token no Authorization. O servidor é
- * quem decide o que o curador pode ver — o client nunca fala com o Firestore.
+ * quem decide o que o curador pode ver; o client nunca fala com o Firestore.
  */
 export async function apiCurador<T>(
   caminho: string,
@@ -72,7 +72,7 @@ export async function baixarPdf(relatorioId: string, nomeArquivo: string) {
 }
 
 export function dataHora(iso?: string | null) {
-  if (!iso) return "—";
+  if (!iso) return "-";
   return new Date(iso).toLocaleString("pt-BR", {
     dateStyle: "short",
     timeStyle: "short",

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+import { BotaoGrande, Instrucao } from "@/components/ui";
 import { dispositivoId } from "@/lib/dispositivo";
 
 type Etapa = "verificando" | "identificacao" | "pin";
@@ -96,12 +97,15 @@ export default function LoginIdoso() {
     <main className="flex flex-1 flex-col items-center justify-center gap-8 px-6 py-10">
       <header className="text-center">
         <h1 className="text-4xl font-bold text-marca">Olá! Eu sou a Nina</h1>
-        <p className="mt-3 text-xl text-tinta-suave">
-          {etapa === "identificacao"
-            ? "Como você se chama?"
-            : "Agora digite seu número de 4 dígitos"}
-        </p>
       </header>
+
+      <div className="w-full max-w-md">
+        <Instrucao>
+          {etapa === "identificacao"
+            ? "Primeiro, me diga o seu nome"
+            : "Agora digite o seu número de 4 dígitos"}
+        </Instrucao>
+      </div>
 
       {etapa === "identificacao" ? (
         <form
@@ -111,32 +115,32 @@ export default function LoginIdoso() {
             if (nome.trim() && sobrenome.trim()) setEtapa("pin");
           }}
         >
-          <label className="flex flex-col gap-2 text-lg font-semibold">
-            Primeiro nome
+          <label className="flex flex-col gap-2 text-xl font-semibold">
+            Seu primeiro nome
             <input
               autoFocus
               value={nome}
               onChange={(e) => setNome(e.target.value)}
               autoComplete="given-name"
-              className="rounded-2xl border-2 border-borda bg-superficie px-5 py-4 text-2xl outline-none focus:border-marca"
+              className="min-h-18 rounded-2xl border-2 border-borda bg-superficie px-5 text-2xl outline-none focus:border-marca"
             />
           </label>
-          <label className="flex flex-col gap-2 text-lg font-semibold">
-            Sobrenome
+          <label className="flex flex-col gap-2 text-xl font-semibold">
+            Seu sobrenome
             <input
               value={sobrenome}
               onChange={(e) => setSobrenome(e.target.value)}
               autoComplete="family-name"
-              className="rounded-2xl border-2 border-borda bg-superficie px-5 py-4 text-2xl outline-none focus:border-marca"
+              className="min-h-18 rounded-2xl border-2 border-borda bg-superficie px-5 text-2xl outline-none focus:border-marca"
             />
           </label>
-          <button
+          <BotaoGrande
             type="submit"
             disabled={!nome.trim() || !sobrenome.trim()}
-            className="mt-2 min-h-16 rounded-2xl bg-marca text-2xl font-bold text-white shadow-sm transition hover:bg-marca-escura disabled:opacity-40"
+            dica="Depois vem o seu número de 4 dígitos"
           >
             Continuar
-          </button>
+          </BotaoGrande>
         </form>
       ) : (
         <div className="flex w-full max-w-md flex-col items-center gap-6">
@@ -145,7 +149,7 @@ export default function LoginIdoso() {
               <span
                 key={i}
                 aria-hidden="true"
-                className={`h-6 w-6 rounded-full border-2 ${
+                className={`h-8 w-8 rounded-full border-4 ${
                   pin.length > i ? "border-marca bg-marca" : "border-borda bg-superficie"
                 }`}
               />
@@ -159,7 +163,7 @@ export default function LoginIdoso() {
                 type="button"
                 onClick={() => digitar(d)}
                 disabled={enviando}
-                className="min-h-20 rounded-2xl border-2 border-borda bg-superficie text-3xl font-bold transition active:bg-marca-clara disabled:opacity-40"
+                className="min-h-22 rounded-2xl border-2 border-borda bg-superficie text-4xl font-bold transition hover:border-marca active:bg-marca-clara disabled:opacity-40"
               >
                 {d}
               </button>
@@ -170,7 +174,7 @@ export default function LoginIdoso() {
                 setPin("");
                 setErro("");
               }}
-              className="min-h-20 rounded-2xl border-2 border-borda bg-superficie text-lg font-semibold text-tinta-suave"
+              className="min-h-22 rounded-2xl border-2 border-borda bg-superficie text-lg font-semibold text-tinta-suave transition hover:border-marca"
             >
               Limpar
             </button>
@@ -178,14 +182,14 @@ export default function LoginIdoso() {
               type="button"
               onClick={() => digitar("0")}
               disabled={enviando}
-              className="min-h-20 rounded-2xl border-2 border-borda bg-superficie text-3xl font-bold transition active:bg-marca-clara disabled:opacity-40"
+              className="min-h-22 rounded-2xl border-2 border-borda bg-superficie text-4xl font-bold transition hover:border-marca active:bg-marca-clara disabled:opacity-40"
             >
               0
             </button>
             <button
               type="button"
               onClick={() => setPin((p) => p.slice(0, -1))}
-              className="min-h-20 rounded-2xl border-2 border-borda bg-superficie text-lg font-semibold text-tinta-suave"
+              className="min-h-22 rounded-2xl border-2 border-borda bg-superficie text-lg font-semibold text-tinta-suave transition hover:border-marca"
             >
               Apagar
             </button>
@@ -198,8 +202,9 @@ export default function LoginIdoso() {
               setPin("");
               setErro("");
             }}
-            className="text-lg font-semibold text-marca underline"
+            className="flex min-h-14 items-center gap-2 rounded-2xl border-2 border-borda bg-superficie px-6 text-lg font-bold text-tinta transition hover:border-marca"
           >
+            <span aria-hidden="true" className="text-2xl leading-none">←</span>
             Voltar e corrigir meu nome
           </button>
         </div>
@@ -209,8 +214,11 @@ export default function LoginIdoso() {
         {erro}
       </p>
 
-      <Link href="/curador" className="text-base text-tinta-suave underline">
-        Área do curador
+      <Link
+        href="/curador"
+        className="flex min-h-12 items-center gap-2 rounded-2xl px-4 text-base font-semibold text-tinta-suave transition hover:bg-marca-clara hover:text-marca"
+      >
+        Sou da equipe: área do curador
       </Link>
     </main>
   );

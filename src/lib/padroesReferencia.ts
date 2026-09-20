@@ -5,7 +5,7 @@ import type { PadraoReferencia } from "@/lib/types";
  *
  * Esta lista NÃO é gerada por IA e não deve ser ampliada pelo modelo: é o
  * catálogo fechado contra o qual a transcrição é comparada. Cada item aponta a
- * fonte que descreve o padrão comportamental — nenhum deles é critério
+ * fonte que descreve o padrão comportamental, nenhum deles é critério
  * diagnóstico e nenhum, isoladamente, significa doença.
  *
  * Revise com a equipe clínica da instituição antes de usar em produção:
@@ -17,7 +17,7 @@ export const PADROES_SEMENTE: Omit<PadraoReferencia, "id">[] = [
     descricaoPadrao:
       "A pessoa repete a mesma pergunta, história ou informação dentro da mesma conversa, sem indicar reconhecer que já havia dito.",
     fonteReferencia:
-      "Alzheimer's Association — 10 Early Signs and Symptoms of Alzheimer's, sinal 2 (asking the same questions over and over). https://www.alz.org/alzheimers-dementia/10_signs",
+      "Alzheimer's Association, 10 Early Signs and Symptoms of Alzheimer's, sinal 2 (asking the same questions over and over). https://www.alz.org/alzheimers-dementia/10_signs",
     categoriaRelacionada: "memoria_recente",
     ativo: true,
   },
@@ -26,7 +26,7 @@ export const PADROES_SEMENTE: Omit<PadraoReferencia, "id">[] = [
     descricaoPadrao:
       "A pessoa não recorda evento recente e concreto do próprio dia (refeição feita, visita recebida, atividade realizada) quando perguntada de forma aberta.",
     fonteReferencia:
-      "American Psychiatric Association — DSM-5-TR, domínio de aprendizagem e memória nos Transtornos Neurocognitivos (2022).",
+      "American Psychiatric Association, DSM-5-TR, domínio de aprendizagem e memória nos Transtornos Neurocognitivos (2022).",
     categoriaRelacionada: "memoria_recente",
     ativo: true,
   },
@@ -53,7 +53,7 @@ export const PADROES_SEMENTE: Omit<PadraoReferencia, "id">[] = [
     descricaoPadrao:
       "A pessoa interrompe a fala procurando palavra comum, substitui por termo genérico ('aquela coisa', 'o negócio') ou troca o nome de objeto conhecido.",
     fonteReferencia:
-      "Alzheimer's Association — 10 Early Signs and Symptoms of Alzheimer's, sinal 7 (new problems with words in speaking or writing). https://www.alz.org/alzheimers-dementia/10_signs",
+      "Alzheimer's Association, 10 Early Signs and Symptoms of Alzheimer's, sinal 7 (new problems with words in speaking or writing). https://www.alz.org/alzheimers-dementia/10_signs",
     categoriaRelacionada: "memoria_recente",
     ativo: true,
   },
@@ -62,7 +62,7 @@ export const PADROES_SEMENTE: Omit<PadraoReferencia, "id">[] = [
     descricaoPadrao:
       "O relato perde encadeamento: a pessoa muda de assunto no meio da frase, mistura épocas diferentes ou não conclui a ideia iniciada.",
     fonteReferencia:
-      "American Psychiatric Association — DSM-5-TR, domínio de linguagem e função executiva nos Transtornos Neurocognitivos (2022).",
+      "American Psychiatric Association, DSM-5-TR, domínio de linguagem e função executiva nos Transtornos Neurocognitivos (2022).",
     categoriaRelacionada: "memoria_recente",
     ativo: true,
   },
@@ -143,7 +143,7 @@ export const PADROES_SEMENTE: Omit<PadraoReferencia, "id">[] = [
     descricaoPadrao:
       "A pessoa relata não receber visitas, evitar convívio com outros residentes ou passar o dia sozinha no quarto.",
     fonteReferencia:
-      "World Health Organization — Social isolation and loneliness among older people: advocacy brief. Geneva: WHO, 2021.",
+      "World Health Organization, Social isolation and loneliness among older people: advocacy brief. Geneva: WHO, 2021.",
     categoriaRelacionada: "humor",
     ativo: true,
   },

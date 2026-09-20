@@ -28,7 +28,7 @@ export async function POST(req: Request) {
   await ref.update({ status: "concluida", finalizadaEm: new Date().toISOString() });
 
   // O pipeline roda inteiro no servidor. O tablet dispara esta chamada e já
-  // mostra a despedida sem esperar — nenhuma tela de carregamento de curadoria
+  // mostra a despedida sem esperar, nenhuma tela de carregamento de curadoria
   // na frente do idoso.
   try {
     const resultado = await finalizarConversa({ instituicaoId, conversaId });

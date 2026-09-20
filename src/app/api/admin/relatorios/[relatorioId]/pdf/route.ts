@@ -9,7 +9,7 @@ type Ctx = { params: Promise<{ relatorioId: string }> };
 
 /**
  * Download do PDF. O arquivo no Storage é privado: o browser nunca recebe URL
- * direta, só este stream autenticado — e cada download vira log.
+ * direta, só este stream autenticado, e cada download vira log.
  *
  * Sem arquivo no Storage (bucket indisponível quando o relatório foi gerado),
  * o PDF é montado na hora a partir do texto guardado no Firestore. O documento

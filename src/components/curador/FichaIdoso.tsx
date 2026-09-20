@@ -96,7 +96,7 @@ export default function FichaIdoso({ idosoId }: { idosoId: string }) {
     <div className="flex min-h-dvh flex-col">
       <Cabecalho
         titulo={`${idoso.nome} ${idoso.sobrenome}`}
-        subtitulo={`Quarto ${idoso.quartoNumero || "—"}`}
+        subtitulo={`Quarto ${idoso.quartoNumero || "-"}`}
         voltarPara="/curador"
       />
 

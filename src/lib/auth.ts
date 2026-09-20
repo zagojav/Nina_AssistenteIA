@@ -15,7 +15,7 @@ export class ErroAutorizacao extends Error {
 
 /**
  * Valida o ID token do Firebase Auth enviado pelo curador e devolve o doc dele.
- * Toda rota da área admin passa por aqui — é o que amarra o curador à
+ * Toda rota da área admin passa por aqui, é o que amarra o curador à
  * instituicaoId dele, base de toda a checagem de escopo (LGPD).
  */
 export async function curadorAutenticado(req: Request): Promise<Curador> {
@@ -31,7 +31,7 @@ export async function curadorAutenticado(req: Request): Promise<Curador> {
   }
 
   // O doc do curador é gravado com o próprio uid como id, então isto é um get
-  // direto — sem consulta de grupo de coleção, que exigiria índice e
+  // direto, sem consulta de grupo de coleção, que exigiria índice e
   // quebraria o login num projeto recém-criado. Cada deploy atende uma
   // instituição, que vem de INSTITUICAO_ID.
   const doc = await db().doc(`${paths.curadores(instituicaoPadrao())}/${uid}`).get();
@@ -67,7 +67,7 @@ export function respostaErro(e: unknown) {
 
   /*
    * Índice composto faltando vira um 500 sem pista nenhuma na tela. O
-   * Firestore já devolve o link de criação dentro da mensagem — repassamos
+   * Firestore já devolve o link de criação dentro da mensagem, repassamos
    * ele para o curador em vez de esconder num log de servidor.
    */
   if (msg.includes("FAILED_PRECONDITION") && msg.includes("requires an index")) {

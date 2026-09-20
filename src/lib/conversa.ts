@@ -45,8 +45,8 @@ export async function carregarMensagens(
 
 /**
  * Escolhe a categoria de foco: a menos visitada nas conversas recentes do
- * idoso, ignorando as já cobertas nesta conversa. Rodízio no servidor — a Nina
- * não faz esse controle, ela só recebe a categoria do dia pronta.
+ * idoso, ignorando as já cobertas nesta conversa. O rodízio é decidido no
+ * servidor: a Nina não faz esse controle, só recebe a categoria do dia pronta.
  */
 export async function escolherCategoria(
   instituicaoId: string,
@@ -58,14 +58,14 @@ export async function escolherCategoria(
 
   // O histórico de rodízio vive no próprio doc do idoso (um get), e não numa
   // consulta ordenada sobre `conversas`. A consulta exigiria índice composto,
-  // e índice faltando derrubava a conversa inteira num projeto recém-criado —
+  // e índice faltando derrubava a conversa inteira num projeto recém-criado,
   // justamente na tela que o idoso usa sozinho.
   const snap = await db().doc(paths.idoso(instituicaoId, idosoId)).get();
   const recentes = (snap.data()?.categoriasRecentes ?? []) as CategoriaPergunta[];
 
   const uso = new Map<CategoriaPergunta, number>(pool.map((c) => [c, 0]));
   recentes.forEach((c, indice) => {
-    // Quanto mais recente, mais pesa — empurra o rodízio para o que faz tempo.
+    // Quanto mais recente, mais pesa: empurra o rodízio para o que faz tempo.
     const peso = Math.max(1, MEMORIA_CATEGORIAS - indice);
     if (uso.has(c)) uso.set(c, (uso.get(c) ?? 0) + peso);
   });
@@ -107,7 +107,7 @@ export async function falaDaNina(params: {
   }));
 
   // Na abertura não há histórico nenhum, e a API precisa de ao menos uma
-  // mensagem além da de sistema — então entra a deixa de início.
+  // mensagem além da de sistema, por isso a deixa de início.
   if (!historico.length) {
     historico.push({ role: "user", content: "(início da conversa)" });
   }
@@ -158,7 +158,7 @@ async function resumirParaContexto(transcricao: string): Promise<string> {
 /**
  * Fecha a conversa: analisa a transcrição completa contra a base de padrões,
  * grava os indícios, redige o relatório da conversa, gera o PDF e só então
- * resume a conversa — o resumo serve à próxima conversa, nunca à análise.
+ * resume a conversa. O resumo serve à próxima conversa, nunca à análise.
  */
 export async function finalizarConversa(params: {
   instituicaoId: string;

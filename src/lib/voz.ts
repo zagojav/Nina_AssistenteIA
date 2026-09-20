@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Voz pela Web Speech API nativa do navegador — reconhecimento e síntese.
+ * Voz pela Web Speech API nativa do navegador, reconhecimento e síntese.
  * Nada disso passa por API paga: roda no próprio aparelho.
  *
  * Suporte varia: Chrome/Edge (incluindo Android) reconhecem bem em pt-BR;

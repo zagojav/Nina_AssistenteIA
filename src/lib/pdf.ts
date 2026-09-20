@@ -13,7 +13,7 @@ const SECAO = 12.5;
 /**
  * As fontes padrão do PDF usam WinAnsi (CP1252), que cobre o português mas não
  * cobre sinais tipográficos como travessão longo ou aspas curvas exóticas.
- * Trocamos por equivalentes ASCII antes de desenhar — sem isso o pdf-lib lança
+ * Trocamos por equivalentes ASCII antes de desenhar. Sem isso o pdf-lib lança
  * erro no meio da geração e o relatório inteiro se perde.
  */
 function sanitizar(texto: string): string {
@@ -31,7 +31,7 @@ function sanitizar(texto: string): string {
 /** Tira ênfase markdown: o renderizador é de texto corrido, não formata. */
 function semEnfase(texto: string): string {
   // O marcador de lista já foi consumido antes de chegar aqui, então todo
-  // asterisco restante é ênfase — e ênfase vira lixo visível no PDF.
+  // asterisco restante é ênfase, e ênfase vira lixo visível no PDF.
   return texto.replace(/[*`]/g, "").replace(/\s{2,}/g, " ").trim();
 }
 
@@ -71,7 +71,7 @@ export interface DadosPdf {
 export async function gerarPdf(dados: DadosPdf): Promise<Uint8Array> {
   const pdf = await PDFDocument.create();
   pdf.setTitle(dados.tituloDocumento);
-  pdf.setProducer("Nina — Assistente de Curadores");
+  pdf.setProducer("Nina - Assistente de Curadores");
 
   const regular = await pdf.embedFont(StandardFonts.Helvetica);
   const negrito = await pdf.embedFont(StandardFonts.HelveticaBold);

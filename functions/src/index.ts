@@ -7,7 +7,7 @@ import * as logger from "firebase-functions/logger";
  *
  * A lógica pesada (análise, relatório, PDF) vive na aplicação Next.js, que já
  * tem a chave da Claude e o acesso ao Storage. Duplicar isso aqui significaria
- * manter dois motores de indícios — então estas funções só disparam as rotas
+ * manter dois motores de indícios, então estas funções só disparam as rotas
  * protegidas por segredo compartilhado.
  *
  * Se o deploy for na Vercel, o `vercel.json` já agenda as mesmas rotas e este

@@ -14,7 +14,7 @@ import { JOGOS_SEMENTE } from "@/lib/jogos";
  *   -H "x-seed-secret: $SEED_SECRET" -H "content-type: application/json" \
  *   -d '{"instituicao":{"nome":"Casa Bem Viver"},
  *        "curador":{"nome":"Ana","email":"ana@casa.com","senha":"...","cargo":"Enfermeira"},
- *        "idosoDemo":{"nome":"Joao","sobrenome":"Silva","pin":"1234"}}'
+ *        "idosoDemo":{"nome":"Joao","sobrenome":"Souza","pin":"1234"}}'
  */
 export async function POST(req: Request) {
   const segredo = process.env.SEED_SECRET;
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     }
     resultado.jogosCriados = jogosCriados;
 
-    // 3. Instituição — reaproveita a de mesmo nome se já existir, para que
+    // 3. Instituição, reaproveita a de mesmo nome se já existir, para que
     // rodar o seed de novo (depois de corrigir Auth, por exemplo) não crie
     // uma segunda casa de repouso com os mesmos dados.
     if (!corpo.instituicao?.nome) {
@@ -173,7 +173,7 @@ export async function POST(req: Request) {
         resultado.avisoCurador = authDesligado
           ? "Curador NÃO criado: o Authentication do projeto ainda não foi " +
             "inicializado. Ative em Console do Firebase > Authentication > " +
-            "Começar > E-mail/senha e rode este seed de novo — o residente já " +
+            "Começar > E-mail/senha e rode este seed de novo, o residente já " +
             "está criado e será vinculado ao curador automaticamente."
           : `Curador não criado: ${msg}`;
       }

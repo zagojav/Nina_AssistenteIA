@@ -76,7 +76,7 @@ export async function redigirRelatorio(params: {
     `PERÍODO: ${dataBr(periodoInicio)} a ${dataBr(periodoFim)}`,
     `CONVERSAS NO PERÍODO: ${totalConversas}`,
     "",
-    "INDÍCIOS REGISTRADOS (já validados contra a base de referência — não acrescente outros):",
+    "INDÍCIOS REGISTRADOS (já validados contra a base de referência, não acrescente outros):",
     listaIndicios,
     transcricao ? `\nTRANSCRIÇÃO DA CONVERSA (contexto para descrever a coleta):\n${transcricao}` : "",
   ].join("\n");
@@ -106,9 +106,9 @@ export async function montarPdf(params: {
   conteudo: string;
 }): Promise<Uint8Array> {
   const titulo = {
-    por_conversa: "Relatório de acompanhamento — conversa",
-    diario: "Relatório de acompanhamento — consolidado diário",
-    semanal: "Relatório de acompanhamento — consolidado semanal",
+    por_conversa: "Relatório de acompanhamento: conversa",
+    diario: "Relatório de acompanhamento: consolidado diário",
+    semanal: "Relatório de acompanhamento: consolidado semanal",
   }[params.tipo];
 
   return gerarPdf({
@@ -124,7 +124,7 @@ export async function montarPdf(params: {
 /**
  * Gera o PDF, sobe no Storage privado e devolve o caminho do objeto.
  *
- * Devolve `null` se o Storage falhar — bucket ainda não criado no projeto, por
+ * Devolve `null` se o Storage falhar, bucket ainda não criado no projeto, por
  * exemplo. O documento de verdade é o texto já gravado no Firestore; o PDF é
  * uma renderização dele e pode ser refeito na hora do download. Derrubar o
  * pipeline aqui custaria a análise e o resumo da conversa inteira.

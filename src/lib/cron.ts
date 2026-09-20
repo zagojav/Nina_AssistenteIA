@@ -1,7 +1,7 @@
 import "server-only";
 
 /**
- * Rotinas agendadas se autenticam por segredo compartilhado — o Vercel Cron
+ * Rotinas agendadas se autenticam por segredo compartilhado, o Vercel Cron
  * manda `Authorization: Bearer $CRON_SECRET`; o Cloud Scheduler/Functions
  * manda o mesmo valor em `x-cron-secret`.
  */

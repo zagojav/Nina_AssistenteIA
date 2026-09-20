@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 
+import CampoSenha from "@/components/CampoSenha";
 import { clientAuth } from "@/lib/firebase/client";
 
 /**
@@ -10,7 +11,7 @@ import { clientAuth } from "@/lib/firebase/client";
  *
  * Usada nas duas portas de saída do tablet do residente: destravar o app
  * depois de perder o foco, e encerrar a sessão. Em nenhuma delas vale o PIN do
- * próprio idoso — se valesse, ele destrancaria a própria trava.
+ * próprio idoso, se valesse, ele destrancaria a própria trava.
  *
  * A sessão do curador é encerrada no mesmo instante em que a senha confere: o
  * tablet do residente nunca fica com um curador logado.
@@ -75,16 +76,14 @@ export default function SenhaCurador({
             className="rounded-2xl border-2 border-borda px-4 py-3 text-lg outline-none focus:border-marca"
           />
         </label>
-        <label className="mt-4 flex flex-col gap-2 font-semibold">
-          Senha
-          <input
-            type="password"
+        <div className="mt-4">
+          <CampoSenha
+            rotulo="Senha"
+            valor={senha}
+            aoMudar={setSenha}
             autoComplete="off"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            className="rounded-2xl border-2 border-borda px-4 py-3 text-lg outline-none focus:border-marca"
           />
-        </label>
+        </div>
 
         {erro && (
           <p role="alert" className="mt-3 font-semibold text-alerta">

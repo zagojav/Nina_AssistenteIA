@@ -8,7 +8,7 @@ export const maxDuration = 800;
 
 /**
  * Consolidado diário ou semanal de todos os residentes ativos.
- * Roda sem curador na frente, então não gera log de acesso — ninguém leu nada.
+ * Roda sem curador na frente, então não gera log de acesso, ninguém leu nada.
  */
 export async function GET(req: Request) {
   if (!cronAutorizado(req)) {
@@ -27,15 +27,17 @@ export async function GET(req: Request) {
   // ficou "em_andamento" e nunca gerou relatório. Fecha o que já esfriou antes
   // de consolidar, senão esses indícios ficariam de fora da janela.
   const corte = new Date(Date.now() - 60 * 60_000).toISOString();
+  // Só filtro de igualdade na consulta; o corte por data é aplicado em memória
+  // para não exigir índice composto.
   const pendentes = await db()
     .collection(paths.conversas(instituicaoId))
     .where("status", "==", "em_andamento")
-    .where("iniciadaEm", "<", corte)
-    .limit(50)
+    .limit(200)
     .get();
 
   let finalizadas = 0;
   for (const doc of pendentes.docs) {
+    if ((doc.data().iniciadaEm as string) >= corte) continue;
     try {
       await finalizarConversa({ instituicaoId, conversaId: doc.id });
       finalizadas++;
@@ -55,7 +57,7 @@ export async function GET(req: Request) {
   for (const doc of ativos.docs) {
     const idoso = doc.data() as Idoso;
     try {
-      // Sem conversa na janela não há o que consolidar — evita relatório vazio.
+      // Sem conversa na janela não há o que consolidar, evita relatório vazio.
       const conversas = await db()
         .collection(paths.conversas(instituicaoId))
         .where("idosoId", "==", doc.id)

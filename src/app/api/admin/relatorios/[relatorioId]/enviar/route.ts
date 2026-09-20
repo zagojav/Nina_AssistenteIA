@@ -13,7 +13,7 @@ type Ctx = { params: Promise<{ relatorioId: string }> };
  * Envia o relatório por e-mail (anexo) ou devolve um link wa.me pronto.
  *
  * O WhatsApp não aceita anexo por link, então o que vai na mensagem é uma URL
- * assinada de curta duração — 30 minutos, o bastante para o destinatário
+ * assinada de curta duração, 30 minutos, o bastante para o destinatário
  * baixar sem que o link fique circulando.
  */
 export async function POST(req: Request, { params }: Ctx) {
@@ -57,7 +57,7 @@ export async function POST(req: Request, { params }: Ctx) {
       const { error } = await resend.emails.send({
         from: process.env.EMAIL_REMETENTE,
         to: destino.trim(),
-        subject: `Relatório de acompanhamento — ${nomeCompleto}`,
+        subject: `Relatório de acompanhamento: ${nomeCompleto}`,
         text:
           `Segue em anexo o relatório de acompanhamento de ${nomeCompleto}.\n\n` +
           "Documento confidencial: contém dado pessoal sensível de saúde (LGPD). " +

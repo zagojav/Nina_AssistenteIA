@@ -66,7 +66,7 @@ export default function Painel() {
 
   const nomePor = (id: string) => {
     const i = idosos.find((x) => x.id === id);
-    return i ? `${i.nome} ${i.sobrenome}` : "—";
+    return i ? `${i.nome} ${i.sobrenome}` : "-";
   };
 
   return (
@@ -133,7 +133,7 @@ export default function Painel() {
                       {idoso.nome} {idoso.sobrenome}
                     </span>
                     <span className="text-base text-tinta-suave">
-                      Quarto {idoso.quartoNumero || "—"} ·{" "}
+                      Quarto {idoso.quartoNumero || "-"} ·{" "}
                       {idoso.dispositivoVinculado
                         ? "tablet vinculado"
                         : "aguardando 1º acesso"}
